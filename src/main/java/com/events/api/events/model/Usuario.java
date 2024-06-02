@@ -44,6 +44,7 @@ public class Usuario {
     @JsonIgnore
     private Set<Evento> eventos;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "evento_participantes",
@@ -54,6 +55,8 @@ public class Usuario {
     private Set<Evento> eventosParticipados;
 
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @JsonIgnore
     private Set<Trabalho> trabalhos;
 
 

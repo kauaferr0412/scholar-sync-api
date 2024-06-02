@@ -20,8 +20,8 @@ public class UsuarioService {
     @Autowired
     private EventoService eventoService;
 
-    public List<Usuario> getAllUsers() {
-        return userRepository.findAll();
+    public Set<Usuario> getAllUsers() {
+        return userRepository.pegarTodos();
     }
 
     public Optional<Usuario> getUserById(Long id) {
