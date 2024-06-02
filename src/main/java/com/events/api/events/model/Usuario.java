@@ -43,6 +43,7 @@ public class Usuario {
     @OneToMany(mappedBy = "organizador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Evento> eventos;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(
@@ -54,6 +55,8 @@ public class Usuario {
     private Set<Evento> eventosParticipados;
 
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @JsonIgnore
     private Set<Trabalho> trabalhos;
 
 

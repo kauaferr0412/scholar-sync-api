@@ -25,7 +25,7 @@ public class UsuarioController {
     private EventoService eventoService;
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> getAllUsers() {
+    public ResponseEntity<Set<Usuario>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
