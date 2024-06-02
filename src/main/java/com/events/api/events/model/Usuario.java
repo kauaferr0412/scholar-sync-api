@@ -43,7 +43,7 @@ public class Usuario {
     @OneToMany(mappedBy = "organizador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Evento> eventos;
-
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "evento_participantes",
