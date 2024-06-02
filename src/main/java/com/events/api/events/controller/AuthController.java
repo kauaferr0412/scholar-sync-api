@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -67,6 +68,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Validated @RequestBody CadastroDTO signUpRequest) {
+        validarDTO(signUpRequest);
+
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
@@ -120,5 +123,20 @@ public class AuthController {
         }
         return roles;
     }
+
+    private void validarDTO(CadastroDTO signUpRequest) {
+        if(Objects.isNull(signUpRequest.getEmail())) {
+            throw  new RuntimeException("O e-mail não pode estar vazio");
+        }
+
+        if(Objects.isNull(signUpRequest.getNome())) {
+            throw  new RuntimeException("O nome não pode estar vazio");
+        }
+
+        if(Objects.isNull(signUpRequest.getRole()) || signUpRequest.getRole().isEmpty()) {
+            throw  new RuntimeException("O usuário precisa de uma ocupação");
+        }
+    }
+
 
 }
