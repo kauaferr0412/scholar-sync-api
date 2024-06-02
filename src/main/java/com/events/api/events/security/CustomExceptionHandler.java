@@ -13,4 +13,9 @@ public class CustomExceptionHandler {
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha incorreto");
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<?> handleBadCredentialsException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
