@@ -38,6 +38,14 @@ public class TrabalhoService {
         Usuario autor = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
+        if(trabalhoDTO.getTitulo().isBlank()){
+            throw new RuntimeException(("O título do trabalho não pode estar vazio!"));
+        }
+
+        if(trabalhoDTO.getDescricao().isBlank()){
+            throw new RuntimeException(("A descrição do trabalho não pode estar vazia!"));
+        }
+
         Trabalho trabalho = Trabalho.builder()
                 .titulo(trabalhoDTO.getTitulo())
                 .descricao(trabalhoDTO.getDescricao())
@@ -49,6 +57,17 @@ public class TrabalhoService {
         return convertToDTO(trabalho);
     }
 
+    public List<TrabalhoDTO> getTrabalhosDisponiveisParaUsuario(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<Trabalho> todosTrabalhos = trabalhoRepository.findAll();
+
+        return todosTrabalhos.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
     public List<TrabalhoDTO> getTrabalhosByAutor(String username) {
         Usuario autor = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -57,6 +76,7 @@ public class TrabalhoService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
 
     private TrabalhoDTO convertToDTO(Trabalho trabalho) {
         return TrabalhoDTO.builder()

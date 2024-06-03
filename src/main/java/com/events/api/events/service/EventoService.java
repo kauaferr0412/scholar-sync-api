@@ -41,6 +41,20 @@ public class EventoService {
         return convertToDTO(evento);
     }
 
+    public List<EventoDTO> searchEventos(String titulo, Boolean inscritos, String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<Evento> eventos;
+        if (inscritos != null && inscritos) {
+            eventos = eventoRepository.findByParticipantesId(usuario.getId());
+        } else {
+            eventos = eventoRepository.findByTituloContainingIgnoreCase(titulo);
+        }
+
+        return eventos.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
     public Optional<EventoDTO> updateEvento(Long id, EventoDTO eventoDTO) {
         return eventoRepository.findById(id).map(evento -> {
             evento.setTitulo(eventoDTO.getTitulo());

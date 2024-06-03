@@ -1,6 +1,7 @@
 package com.events.api.events.controller;
 
 import com.events.api.events.dto.EventoDTO;
+import com.events.api.events.dto.UsuarioDTO;
 import com.events.api.events.model.Evento;
 import com.events.api.events.model.Usuario;
 import com.events.api.events.service.EventoService;
@@ -25,7 +26,7 @@ public class UsuarioController {
     private EventoService eventoService;
 
     @GetMapping
-    public ResponseEntity<Set<Usuario>> getAllUsers() {
+    public ResponseEntity<Set<UsuarioDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 

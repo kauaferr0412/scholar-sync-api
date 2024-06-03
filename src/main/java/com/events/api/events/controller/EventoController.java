@@ -34,6 +34,16 @@ public class EventoController {
         return eventoService.createEvento(eventoDTO, username);
     }
 
+    @GetMapping("/search")
+    public List<EventoDTO> searchEventos(
+            @RequestParam(required = false) String titulo,
+            @RequestParam(required = false) Boolean inscritos,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        return eventoService.searchEventos(titulo, inscritos, username);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<EventoDTO> updateEvento(@PathVariable Long id, @RequestBody EventoDTO eventoDTO) {
         Optional<EventoDTO> updatedEvento = eventoService.updateEvento(id, eventoDTO);

@@ -1,6 +1,7 @@
 package com.events.api.events.service;
 
 import com.events.api.events.dto.EventoDTO;
+import com.events.api.events.dto.UsuarioDTO;
 import com.events.api.events.model.Evento;
 import com.events.api.events.model.Usuario;
 import com.events.api.events.repository.UsuarioRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService {
@@ -20,8 +22,8 @@ public class UsuarioService {
     @Autowired
     private EventoService eventoService;
 
-    public Set<Usuario> getAllUsers() {
-        return userRepository.pegarTodos();
+    public Set<UsuarioDTO> getAllUsers() {
+        return userRepository.pegarTodos().stream().map(this::convertToDTO).collect(Collectors.toSet());
     }
 
     public Optional<Usuario> getUserById(Long id) {
@@ -50,4 +52,14 @@ public class UsuarioService {
         user.getEventosParticipados().add(eventoService.convertToEntity(evento));
         return userRepository.save(user);
     }
+
+    public UsuarioDTO convertToDTO(Usuario usuario) {
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setId(usuario.getId());
+        usuarioDTO.setUsername(usuario.getUsername());
+        usuarioDTO.setEmail(usuario.getEmail());
+        usuarioDTO.setNome(usuario.getNome());
+        return usuarioDTO;
+    }
+
 }
