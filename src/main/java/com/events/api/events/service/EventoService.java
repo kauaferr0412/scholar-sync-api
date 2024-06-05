@@ -29,6 +29,26 @@ public class EventoService {
         return eventoRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    public List<EventoDTO> getEventosNaoInscritosParaUsuario(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<Evento> eventos = eventoRepository.findAll().stream()
+                .filter(evento -> !evento.getParticipantes().contains(usuario))
+                .collect(Collectors.toList());
+
+        return eventos.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<EventoDTO> getEventosCriadosPorUsuario(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<Evento> eventos = eventoRepository.findByOrganizador(usuario);
+
+        return eventos.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
     public Optional<EventoDTO> getEventoById(Long id) {
         return eventoRepository.findById(id).map(this::convertToDTO);
     }

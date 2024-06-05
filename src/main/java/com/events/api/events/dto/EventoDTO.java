@@ -6,7 +6,7 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @Data
 public class EventoDTO {
@@ -19,4 +19,5 @@ public class EventoDTO {
     private String tipo;
     private UsuarioDTO organizador;
     private List<UsuarioDTO> participantes;
+    private Map<Long, List<FrequenciaDTO>> frequenciasPorUsuario;
 }

@@ -28,6 +28,25 @@ public class TrabalhoController {
     @Autowired
     private SolucaoService solucaoService;
 
+
+    @GetMapping("/pendentes")
+    public List<TrabalhoDTO> getTrabalhosPendentesParaUsuario(Authentication authentication) {
+        String username = authentication.getName();
+        return trabalhoService.getTrabalhosPendentesParaUsuario(username);
+    }
+
+    @GetMapping("/criados")
+    public List<TrabalhoDTO> getTrabalhosCriadosPorUsuario(Authentication authentication) {
+        String username = authentication.getName();
+        return trabalhoService.getTrabalhosCriadosPorUsuario(username);
+    }
+
+    @GetMapping("/aguardandoNota")
+    public List<TrabalhoDTO> getTrabalhosAguardandoNota(Authentication authentication) {
+        String username = authentication.getName();
+        return trabalhoService.getTrabalhosAguardandoNota(username);
+    }
+
     @PostMapping
     public TrabalhoDTO createTrabalho(@RequestBody TrabalhoDTO trabalhoDTO, Authentication authentication) {
         String username = authentication.getName();

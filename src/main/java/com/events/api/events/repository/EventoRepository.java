@@ -1,6 +1,7 @@
 package com.events.api.events.repository;
 
 import com.events.api.events.model.Evento;
+import com.events.api.events.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,6 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
 
     List<Evento> findByTituloContainingIgnoreCase(String titulo);
     List<Evento> findByParticipantesId(Long participanteId);
+
+    List<Evento> findByOrganizador(Usuario usuario);
 }

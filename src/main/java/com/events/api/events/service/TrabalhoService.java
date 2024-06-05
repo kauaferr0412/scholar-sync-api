@@ -34,6 +34,40 @@ public class TrabalhoService {
     @Autowired
     private FileStorageService fileStorageService;
 
+
+    public List<TrabalhoDTO> getTrabalhosPendentesParaUsuario(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<Trabalho> trabalhos = trabalhoRepository.findAll().stream()
+                .filter(trabalho -> trabalho.getSolucoes().stream()
+                        .noneMatch(solucao -> solucao.getAluno().equals(usuario)))
+                .collect(Collectors.toList());
+
+        return trabalhos.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<TrabalhoDTO> getTrabalhosCriadosPorUsuario(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<Trabalho> trabalhos = trabalhoRepository.findByAutor(usuario);
+
+        return trabalhos.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public List<TrabalhoDTO> getTrabalhosAguardandoNota(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<Trabalho> trabalhos = trabalhoRepository.findByAutor(usuario).stream()
+                .filter(trabalho -> trabalho.getSolucoes().stream()
+                        .anyMatch(solucao -> solucao.getNotaAvaliacao() == null))
+                .collect(Collectors.toList());
+
+        return trabalhos.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
     public TrabalhoDTO createTrabalho(TrabalhoDTO trabalhoDTO, String username) {
         Usuario autor = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));

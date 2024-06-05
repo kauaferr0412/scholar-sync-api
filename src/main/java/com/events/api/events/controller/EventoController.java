@@ -22,6 +22,18 @@ public class EventoController {
         return eventoService.getAllEventos();
     }
 
+    @GetMapping("/naoInscritos")
+    public List<EventoDTO> getEventosNaoInscritosParaUsuario(Authentication authentication) {
+        String username = authentication.getName();
+        return eventoService.getEventosNaoInscritosParaUsuario(username);
+    }
+
+    @GetMapping("/criados")
+    public List<EventoDTO> getEventosCriadosPorUsuario(Authentication authentication) {
+        String username = authentication.getName();
+        return eventoService.getEventosCriadosPorUsuario(username);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<EventoDTO> getEventoById(@PathVariable Long id) {
         Optional<EventoDTO> evento = eventoService.getEventoById(id);

@@ -16,4 +16,7 @@ public interface FrequenciaRepository extends JpaRepository<Frequencia, Long> {
 
     Optional<Frequencia> findByAlunoAndEvento(Usuario aluno, Evento evento);
 
+    List<Frequencia> findByEventoAndAluno(Evento evento, Usuario usuario);
+
+
 }
