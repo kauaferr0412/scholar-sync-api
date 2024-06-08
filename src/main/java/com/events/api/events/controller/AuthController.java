@@ -1,7 +1,5 @@
 package com.events.api.events.controller;
 
-
-
 import com.events.api.events.dto.CadastroDTO;
 import com.events.api.events.dto.JwtResponseDTO;
 import com.events.api.events.dto.LoginDTO;
@@ -20,7 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,6 +72,10 @@ public class AuthController {
             throw new RuntimeException("Nome de usuário já utilizado!");
         }
 
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            throw new RuntimeException("E-mail já utilizado!");
+        }
+
         Usuario user = Usuario.builder()
                 .username(signUpRequest.getUsername())
                 .password(encoder.encode(signUpRequest.getPassword()))
@@ -90,7 +91,6 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponseDTO("Usuário registrado com sucesso!"));
     }
 
-
     private Set<Role> validateRules(Set<String> strRoles) {
         Set<Role> roles = new HashSet<>();
 
@@ -101,13 +101,13 @@ public class AuthController {
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "admin":
+                    case "ROLE_ADMIN":
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Perfil não encontrado."));
                         roles.add(adminRole);
 
                         break;
-                    case "mod":
+                    case "ROLE_MODERATOR":
                         Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Perfil não encontrado."));
                         roles.add(modRole);
@@ -124,6 +124,15 @@ public class AuthController {
     }
 
     private void validarDTO(CadastroDTO signUpRequest) {
+
+        if(Objects.isNull(signUpRequest.getUsername()) || signUpRequest.getUsername().isBlank()) {
+            throw  new RuntimeException("O nome de usuário não pode estar vazio");
+        }
+
+        if(Objects.isNull(signUpRequest.getPassword()) || signUpRequest.getPassword().isBlank()) {
+            throw  new RuntimeException("A senha não pode estar vazia");
+        }
+
         if(Objects.isNull(signUpRequest.getEmail()) || signUpRequest.getEmail().isBlank()) {
             throw  new RuntimeException("O e-mail não pode estar vazio");
         }
@@ -136,6 +145,4 @@ public class AuthController {
             throw  new RuntimeException("O usuário precisa de uma ocupação");
         }
     }
-
-
 }
