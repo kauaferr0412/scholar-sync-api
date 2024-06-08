@@ -20,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,9 +72,7 @@ public class AuthController {
         validarDTO(signUpRequest);
 
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponseDTO("Error: Nome de usuário já utilizado!"));
+            throw new RuntimeException("Nome de usuário já utilizado!");
         }
 
         Usuario user = Usuario.builder()
@@ -125,11 +124,11 @@ public class AuthController {
     }
 
     private void validarDTO(CadastroDTO signUpRequest) {
-        if(Objects.isNull(signUpRequest.getEmail())) {
+        if(Objects.isNull(signUpRequest.getEmail()) || signUpRequest.getEmail().isBlank()) {
             throw  new RuntimeException("O e-mail não pode estar vazio");
         }
 
-        if(Objects.isNull(signUpRequest.getNome())) {
+        if(Objects.isNull(signUpRequest.getNome()) || signUpRequest.getNome().isBlank()) {
             throw  new RuntimeException("O nome não pode estar vazio");
         }
 
