@@ -12,10 +12,21 @@ import com.events.api.events.repository.UsuarioRepository;
 import com.events.api.events.repository.EventoRepository;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 
 import com.itextpdf.text.*;
 
@@ -74,7 +85,7 @@ public class FrequenciaService {
         return frequenciaRepository.findByEvento(evento).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
-    public byte[] gerarCertificado(Long eventoId, Long alunoId) throws DocumentException {
+    public byte[] gerarCertificado(Long eventoId, Long alunoId) throws DocumentException, IOException {
         Evento evento = eventoRepository.findById(eventoId)
                 .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
 
@@ -84,24 +95,38 @@ public class FrequenciaService {
         Frequencia frequencia = frequenciaRepository.findByAlunoAndEvento(aluno, evento)
                 .orElseThrow(() -> new RuntimeException("Frequência não registrada para este aluno e evento"));
 
+        Date dataInicio = evento.getDataInicio();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String dataFormatada = dateFormat.format(dataInicio);
+
         Document document = new Document();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PdfWriter.getInstance(document, out);
+        PdfWriter writer = PdfWriter.getInstance(document, out);
         document.open();
 
-        Paragraph title = new Paragraph("Certificado de Participação");
+        try {
+            String imageUrl = "logo.png";
+            Image img = Image.getInstance(imageUrl);
+            img.setAlignment(Image.ALIGN_CENTER);
+            document.add(img);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Paragraph title = new Paragraph("CERTIFICADO DE PARTICIPAÇÃO");
         title.setAlignment(Element.ALIGN_CENTER);
         document.add(title);
 
-        Paragraph content = new Paragraph("Certificamos que " + aluno.getNome() + " participou do evento " + evento.getTitulo() + " realizado em " + evento.getDataInicio() + ".");
-        content.setAlignment(Element.ALIGN_CENTER);
-        document.add(content);
+        String htmlContent = "<html><body>" +
+                "<p>Certificamos que <strong>" + aluno.getNome() + "</strong> participou do evento <strong>" + evento.getTitulo() + "</strong> realizado em <strong>" + dataFormatada + "</strong>.</p>" +
+                "</body></html>";
+
+        ByteArrayInputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes(StandardCharsets.UTF_8));
+        XMLWorkerHelper.getInstance().parseXHtml(writer, document, htmlStream, StandardCharsets.UTF_8);
 
         document.close();
-
         return out.toByteArray();
     }
-
 
     public FrequenciaDTO convertToDTO(Frequencia frequencia) {
 

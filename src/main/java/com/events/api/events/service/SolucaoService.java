@@ -69,7 +69,7 @@ public class SolucaoService {
                 .collect(Collectors.toList());
     }
 
-    public SolucaoDTO avaliarSolucao(Long id, String comentario, int nota, String username) {
+    public SolucaoDTO avaliarSolucao(Long id, String comentario, Double nota, String username) {
         Solucao solucao = solucaoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Solução não encontrada"));
 

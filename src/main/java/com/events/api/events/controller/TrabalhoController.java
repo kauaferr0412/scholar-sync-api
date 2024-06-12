@@ -77,7 +77,7 @@ public class TrabalhoController {
     }
 
     @PostMapping("/solucoes/{solucaoId}/avaliar")
-    public SolucaoDTO avaliarSolucao(@PathVariable Long solucaoId, @RequestParam String comentario, @RequestParam int nota, Authentication authentication) {
+    public SolucaoDTO avaliarSolucao(@PathVariable Long solucaoId, @RequestParam String comentario, @RequestParam Double nota, Authentication authentication) {
         String username = authentication.getName();
         return solucaoService.avaliarSolucao(solucaoId, comentario, nota, username);
     }

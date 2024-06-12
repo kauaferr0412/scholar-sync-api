@@ -28,7 +28,7 @@ public class Solucao {
     private String comentarioAvaliacao;
 
     @Column
-    private Integer notaAvaliacao;
+    private Double notaAvaliacao;
 
     @ManyToOne
     @JoinColumn(name = "aluno_id", nullable = false)

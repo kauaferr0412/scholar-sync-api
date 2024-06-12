@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 @RestController
 @RequestMapping("/api/frequencias")
@@ -40,7 +41,7 @@ public class FrequenciaController {
     }
 
     @GetMapping("/certificado")
-    public ResponseEntity<byte[]> gerarCertificado(@RequestParam Long eventoId, @RequestParam Long alunoId) throws DocumentException {
+    public ResponseEntity<byte[]> gerarCertificado(@RequestParam Long eventoId, @RequestParam Long alunoId) throws DocumentException, IOException {
         byte[] pdf = frequenciaService.gerarCertificado(eventoId, alunoId);
 
         return ResponseEntity.ok()

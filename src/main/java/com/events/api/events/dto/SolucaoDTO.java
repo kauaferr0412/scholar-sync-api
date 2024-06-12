@@ -13,7 +13,7 @@ public class SolucaoDTO {
     private String caminhoArquivo;
     private LocalDateTime dataSubmissao;
     private String comentarioAvaliacao;
-    private Integer notaAvaliacao;
+    private Double notaAvaliacao;
     private String aluno;
     private Long trabalhoId;
 }
