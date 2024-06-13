@@ -11,6 +11,7 @@ import com.events.api.events.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,6 +89,10 @@ public class EventoService {
     }
 
     public void deleteEvento(Long id) {
+        Evento evento = eventoRepository.findById(id).get();
+        evento.setParticipantes(new HashSet<>());
+
+        eventoRepository.save(evento);
         eventoRepository.deleteById(id);
     }
 

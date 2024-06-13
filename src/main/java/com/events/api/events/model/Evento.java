@@ -41,7 +41,10 @@ public class Evento {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario organizador;
 
-    @ManyToMany(mappedBy = "eventosParticipados")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "evento_participantes",
+            joinColumns = @JoinColumn(name = "evento_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id"))
     @JsonManagedReference
     private Set<Usuario> participantes;
 
