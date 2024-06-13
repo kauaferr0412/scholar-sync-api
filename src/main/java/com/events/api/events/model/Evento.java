@@ -7,6 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -41,11 +42,11 @@ public class Evento {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario organizador;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "evento_participantes",
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "evento_participantes",
             joinColumns = @JoinColumn(name = "evento_id"),
-            inverseJoinColumns = @JoinColumn(name = "usuario_id"))
-    @JsonManagedReference
-    private Set<Usuario> participantes;
-
+            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
+    private Set<Usuario> participantes = new HashSet<>();
 }

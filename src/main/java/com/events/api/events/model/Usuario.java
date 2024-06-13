@@ -1,8 +1,8 @@
 package com.events.api.events.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
@@ -40,24 +40,21 @@ public class Usuario {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "organizador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organizador", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Evento> eventos;
 
-    @JsonIgnore
-    @ManyToMany
+    @JsonIgnoreProperties("participantes") // Evitar ciclo de serialização JSON
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "evento_participantes",
+            name = "participantes_eventos",
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "evento_id")
     )
-    @JsonManagedReference
-    private Set<Evento> eventosParticipados;
+    @JsonBackReference // Correção para evitar referência gerenciada inadequadamente
+    private Set<Evento> eventosParticipados = new HashSet<>();
 
-    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "autor", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JsonIgnore
     private Set<Trabalho> trabalhos;
-
-
 }

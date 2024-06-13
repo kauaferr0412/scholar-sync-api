@@ -5,16 +5,16 @@ import com.events.api.events.dto.EventoDTO;
 import com.events.api.events.dto.UsuarioDTO;
 import com.events.api.events.enumerator.TipoEvento;
 import com.events.api.events.model.Evento;
+import com.events.api.events.model.Frequencia;
 import com.events.api.events.model.Usuario;
 import com.events.api.events.repository.EventoRepository;
+import com.events.api.events.repository.FrequenciaRepository;
 import com.events.api.events.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import javax.transaction.Transactional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +25,10 @@ public class EventoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+
+    @Autowired
+    private FrequenciaRepository frequenciaRepository;
 
     public List<EventoDTO> getAllEventos() {
         return eventoRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
@@ -88,13 +92,26 @@ public class EventoService {
         });
     }
 
+    @Transactional
     public void deleteEvento(Long id) {
-        Evento evento = eventoRepository.findById(id).get();
-        evento.setParticipantes(new HashSet<>());
+        Evento evento = eventoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Evento não encontrado"));
 
+        evento.getParticipantes().forEach(usuario -> {
+            usuario.getEventosParticipados().remove(evento);
+            usuarioRepository.save(usuario);
+        });
+
+
+        List<Frequencia> frequencias = frequenciaRepository.findByEvento(evento);
+        frequencias.forEach(frequencia -> {frequenciaRepository.deleteById(frequencia.getId());});
+
+
+        evento.setParticipantes(new HashSet<>());
         eventoRepository.save(evento);
         eventoRepository.deleteById(id);
     }
+
 
     public EventoDTO inscreverUsuarioEmEvento(Long eventoId, String username) {
         Usuario usuario = usuarioRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
